@@ -35,7 +35,7 @@ def reshape_content(content):
     return soup.prettify()
 
 
-def html2pdf(title, content, targetPath):
+def html2pdf(title, content, targetPath, attachuuid):
     html = f'''
         <!DOCTYPE html>
         <html lang="en">
@@ -50,13 +50,17 @@ def html2pdf(title, content, targetPath):
         </html>
         '''
     try:
-        pdfkit.from_string(html, 'd:/projectfile/smolib/' + targetPath + f'/{title}.pdf', configuration=config)
+        pdfkit.from_string(html, 'd:/projectfile/smolib/' + targetPath + f'/{attachuuid}.pdf', configuration=config)
     except Exception as e:
         print(e)
 
 
 def reshape_path(spider_name):
-    path = 'pdf/'+spider_name+'_pdf'
+    format_string = "%Y%m%d"
+    time_array = time.localtime(time.time())
+    str_date = time.strftime(format_string,time_array)
+    path = "pdf/"+str_date + ''
+    print(path)
     real_path = 'd:/projectfile/smolib/'+path
     if not os.path.exists(real_path):
         os.makedirs(real_path)

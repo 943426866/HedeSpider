@@ -15,4 +15,7 @@ class HedespiderItem(scrapy.Item):
     content = scrapy.Field()
     path = scrapy.Field()
     userid = scrapy.Field()
+    username = scrapy.Field()
+    taskid = scrapy.Field()
+    attachuuid = scrapy.Field()
 

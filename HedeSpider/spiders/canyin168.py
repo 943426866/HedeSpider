@@ -5,6 +5,7 @@ import os
 from bs4 import BeautifulSoup as bs
 from HedeSpider import items, tools
 import time
+import uuid
 
 
 class canyin168_spider(scrapy.Spider):
@@ -13,8 +14,10 @@ class canyin168_spider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super(canyin168_spider, self).__init__(*args, **kwargs)
         self.start_urls = ['http://www.canyin168.com/Article/']
-        self.keywords = tools.reshape_kwargs(kwargs, 'keyword').split()
+        self.keywords = tools.reshape_kwargs(kwargs, 'keyword').split(',')
         self.userid = tools.reshape_kwargs(kwargs, 'userid')
+        self.username = tools.reshape_kwargs(kwargs, 'username')
+        self.taskid = tools.reshape_kwargs(kwargs, 'taskid')
 
     def parse(self, response):
         def days(day1, day2):
@@ -51,13 +54,16 @@ class canyin168_spider(scrapy.Spider):
         # 清除字体格式，图片
         content = tools.reshape_content(content)
 
-        path = tools.reshape_path(self.name)
+        path = tools.reshape_path(self.name) 
 
         item = items.HedespiderItem()
         item['title'] = title
         item['content'] = content
         item['path'] = path
         item['userid'] = self.userid
+        item['taskid'] = self.taskid
+        item['username'] = self.username
+        item['attachuuid'] = str(uuid.uuid4()).replace("-", "")
         if len(self.keywords) == 0:
             yield item
         for keyword in self.keywords:

@@ -35,13 +35,21 @@ class HedespiderPipeline(object):
 
     def insert_callback(self, result, item):
         if result == 1:
-            tools.html2pdf(item['title'], item['content'], item['path'])
+            tools.html2pdf(item['title'], item['content'], item['path'], item['attachuuid'])
 
     def do_insert(self, cursor, item):
-        insert_sql = "insert into T_Test2(title,path,userid) values(%s,%s,%s)"
-        data = (item['title'], item['path'], item['userid'])
+        print(item['attachuuid'])
+        format_string = "%Y-%m-%d %H:%M:%S"
+        time_array = time.localtime(time.time())
+        str_date = time.strftime(format_string, time_array)
+        print(str_date)
+        dataDoc = (0, item['title'], ' ', item['title'], 'python爬取', item['userid'], item['username'], str_date,
+                   str_date, item['attachuuid'], 0, 0, 0, 0, 0, 0, '01', '04', 0, 0, 0, 0, 0, 0, 0, '01', '01', 2)
+        update_crawlSuccess = "update T_Bus_CrawlTask set taskstatus = '03',enddate = %s,crawnum = crawnum + 1 where taskid = %s"
+        dataCrawl = (str_date,item['taskid'])
         try:
-            cursor.execute(insert_sql, data)
+            cursor.callproc("P_Save_DocumentBase", dataDoc)
+            cursor.execute(update_crawlSuccess, dataCrawl)
             return 1
         except Exception as e:
             return 0
